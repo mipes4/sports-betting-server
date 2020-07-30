@@ -11,13 +11,13 @@ const authRouter = require("./routers/auth");
 const roundRouter = require("./routers/rounds");
 const matches = require("./API_requests/matches");
 const rounds = require("./API_requests/rounds");
+const Match = require("./models").match;
 
 const app = express();
 const router = new Router();
 
 matches.getMatches();
 rounds.getRounds();
-
 /**
  *
  * cors middleware:
