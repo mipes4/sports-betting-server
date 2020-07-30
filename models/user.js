@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: "password",
       },
-      frontName: {
+      firstName: {
         type: DataTypes.STRING,
         allowNull: false,
         defaulValue: "voornaam",

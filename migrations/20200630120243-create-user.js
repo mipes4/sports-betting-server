@@ -23,7 +23,7 @@ module.exports = {
         allowNull: false,
         defaultValue: "password",
       },
-      frontName: {
+      firstName: {
         type: Sequelize.STRING,
         allowNull: false,
         defaultValue: "voornaam",
