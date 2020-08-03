@@ -2,6 +2,9 @@ const { Router } = require("express");
 const Prediction = require("../models").predictions;
 const sequelize = require("sequelize");
 const Match = require("../models").match;
+const User = require("../models").user;
+
+const { Op } = require("sequelize");
 
 const router = new Router();
 
@@ -44,7 +47,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // Update prediction
-router.patch("/prediction/:predictionId", async (req, res, next) => {
+router.patch("/:predictionId", async (req, res, next) => {
   const { predictionId } = req.params;
   console.log("What is my predictionId?", predictionId);
   try {
@@ -56,6 +59,98 @@ router.patch("/prediction/:predictionId", async (req, res, next) => {
       const updatedPrediction = await predictionToUpdate.update(req.body);
       res.json(updatedPrediction);
     }
+  } catch (e) {
+    next(e);
+  }
+});
+
+// GET all toto scores
+router.get("/", async (req, res, next) => {
+  try {
+    const predictions = await Prediction.findAll({
+      attributes: [
+        "userId",
+        [
+          sequelize.fn("SUM", sequelize.col("predictions.totalScore")),
+          "totalScore",
+        ],
+      ],
+      include: {
+        model: User,
+        attributes: ["username"],
+        where: { totaalToto: true },
+      },
+      group: ["userId", "user.id"],
+      order: [[sequelize.fn("SUM", sequelize.col("totalScore")), "DESC"]],
+    });
+    res.send(predictions);
+  } catch (e) {
+    next(e);
+  }
+});
+
+// GET all scores for :matchId
+router.get("/match/:matchId", async (req, res, next) => {
+  const { matchId } = req.params;
+  console.log("-----matchId", matchId);
+
+  try {
+    const matchPrediction = await Prediction.findAll({
+      attributes: [
+        "userId",
+        "predGoalsHomeTeam",
+        "predGoalsAwayTeam",
+        "totalScore",
+      ],
+      include: {
+        model: User,
+        attributes: ["username"],
+      },
+      where: { matchId },
+      order: [["totalScore", "DESC"]],
+    });
+    console.log("-----matchPrediction", matchPrediction);
+    res.send(matchPrediction);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get("/game/:gameId", async (req, res, next) => {
+  const { gameId } = req.params;
+  const seasons = [
+    `Regular Season - ${gameId * 3 - 2}`,
+    `Regular Season - ${gameId * 3 - 1}`,
+    `Regular Season - ${gameId * 3}`,
+  ];
+  parseInt(gameId) === 11
+    ? seasons.push(`Regular Season - ${gameId * 3 + 1}`)
+    : null;
+  console.log("------seasons", seasons, gameId);
+  try {
+    const matchPrediction = await Prediction.findAll({
+      attributes: [
+        "userId",
+        [
+          sequelize.fn("SUM", sequelize.col("predictions.totalScore")),
+          "totalScore",
+        ],
+      ],
+      include: [
+        {
+          model: User,
+          attributes: ["username"],
+        },
+        {
+          model: Match,
+          attributes: [],
+          where: { round: { [Op.in]: seasons } },
+        },
+      ],
+      group: ["userId", "user.id"],
+      order: [[sequelize.fn("SUM", sequelize.col("totalScore")), "DESC"]],
+    });
+    res.send(matchPrediction);
   } catch (e) {
     next(e);
   }

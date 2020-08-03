@@ -11,9 +11,15 @@ module.exports = {
       onUpdate: "CASCADE",
       onDelete: "SET NULL",
     });
+
+    await queryInterface.addColumn("predictions", "totalScore", {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    });
   },
 
   down: async (queryInterface, Sequelize) => {
     await queryInterface.removeColumn("predictions", "matchId");
+    await queryInterface.removeColumn("predictions", "totalScore");
   },
 };
