@@ -4,16 +4,16 @@ const Round = require("../models").round;
 const apiKey = require("../config/constants").apiKey;
 const apiUrl = require("../config/constants").apiUrl;
 
-const league_id = 566;
+const league_id = 2673;
 const getRounds = async () => {
   const response = await Axios.get(
-    `${apiUrlDemo}/fixtures/rounds/${league_id}`
+    `${apiUrl}/fixtures/rounds/${league_id}`,
 
-    /**, {
-      * headers: {
-      *   "X-RapidAPI-Key": apiKey,
-      * },
-    }*/
+    {
+      headers: {
+        "X-RapidAPI-Key": apiKey,
+      },
+    }
   );
 
   const allRounds = response.data.api;
