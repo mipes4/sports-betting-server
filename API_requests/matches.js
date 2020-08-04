@@ -4,10 +4,10 @@ const Match = require("../models").match;
 const apiKey = require("../config/constants").apiKey;
 const apiUrl = require("../config/constants").apiUrl;
 
-const league_id = 566;
+const league_id = 2673;
 const getMatches = async () => {
   const response = await Axios.get(
-    `${apiUrlDemo}/fixtures/league/${league_id}`,
+    `${apiUrl}/fixtures/league/${league_id}`,
 
     {
       headers: {
@@ -29,35 +29,35 @@ const getMatches = async () => {
       homeTeamName: fixture.homeTeam.team_name,
       homeTeamLogo: fixture.homeTeam.logo,
       goalsHomeTeam:
-        fixture.round === "Regular Season - 3" ||
+        /* fixture.round === "Regular Season - 3" ||
         fixture.round === "Regular Season - 4" ||
         fixture.round === "Regular Season - 5"
           ? null
-          : fixture.goalsHomeTeam,
+          : */ fixture.goalsHomeTeam,
       awayTeamId: fixture.awayTeam.team_id,
       awayTeamName: fixture.awayTeam.team_name,
       awayTeamLogo: fixture.awayTeam.logo,
       goalsAwayTeam:
-        fixture.round === "Regular Season - 3" ||
+        /*   fixture.round === "Regular Season - 3" ||
         fixture.round === "Regular Season - 4" ||
         fixture.round === "Regular Season - 5"
           ? null
-          : fixture.goalsAwayTeam,
+          :  */ fixture.goalsAwayTeam,
       eventTimeStamp:
-        fixture.round === "Regular Season - 3"
+        /*  fixture.round === "Regular Season - 3"
           ? 1596880800
           : fixture.round === "Regular Season - 4"
           ? 1597485600
           : fixture.round === "Regular Season - 5"
           ? 1598090400
-          : fixture.event_timestamp,
+          :  */ fixture.event_timestamp,
       round: fixture.round,
       status:
-        fixture.round === "Regular Season - 3" ||
+        /*  fixture.round === "Regular Season - 3" ||
         fixture.round === "Regular Season - 4" ||
         fixture.round === "Regular Season - 5"
           ? "NS"
-          : fixture.statusShort,
+          : */ fixture.statusShort,
     };
   });
   console.log(fixtures);
@@ -65,7 +65,7 @@ const getMatches = async () => {
   const savedFixtures = Match.bulkCreate(fixtures, {
     updateOnDuplicate: ["id"],
   });
-  setInterval(getMatches, 60 * 60 * 1000);
+  // setInterval(getMatches, 60 * 60 * 1000);
 };
 
 // getMatches();
