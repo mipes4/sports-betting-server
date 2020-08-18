@@ -37,16 +37,35 @@ router.post("/login", async (req, res, next) => {
 
 //POST create user
 router.post("/signup", async (req, res) => {
-  const { email, password, name } = req.body;
-  if (!email || !password || !name) {
-    return res.status(400).send("Please provide an email, password and a name");
+  const {
+    email,
+    password,
+    username,
+    firstName,
+    lastName,
+    telNumber,
+  } = req.body;
+  if (
+    !email ||
+    !password ||
+    !username ||
+    !firstName ||
+    !lastName ||
+    !telNumber
+  ) {
+    return res.status(400).send("Please provide an all the details");
   }
 
   try {
     const newUser = await User.create({
       email,
       password: bcrypt.hashSync(password, SALT_ROUNDS),
-      name,
+      username,
+      firstName,
+      lastName,
+      phoneNumber: telNumber,
+      totaalToto,
+      admin: isAdmin,
     });
 
     delete newUser.dataValues["password"];
@@ -68,6 +87,15 @@ router.post("/signup", async (req, res) => {
 //PATCH change user
 router.patch("/change_me/:userId", async (req, res, next) => {
   const { userId } = req.params;
+  const {
+    username,
+    email,
+    firstName,
+    lastName,
+    phoneNumber,
+    club,
+    totaalToto,
+  } = req.body;
   console.log("What is my userId?", userId);
   try {
     // const { password } = req.body;
@@ -89,7 +117,14 @@ router.patch("/change_me/:userId", async (req, res, next) => {
     if (!userToUpdate) {
       res.status(404).send("User not found");
     } else {
-      const updatedUser = await userToUpdate.update(req.body);
+      const updatedUser = await userToUpdate.update({
+        username,
+        email,
+        firstName,
+        lastName,
+        phoneNumber,
+        totaalToto,
+      });
       res.json(updatedUser);
     }
 
