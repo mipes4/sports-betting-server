@@ -3,6 +3,10 @@ const apiUrlDemo = require("../config/constants").apiUrlDemo;
 const Match = require("../models").match;
 const apiKey = require("../config/constants").apiKey;
 const apiUrl = require("../config/constants").apiUrl;
+const Prediction = require("../models").predictions;
+const { Op } = require("sequelize");
+const Score = require("../models").score;
+const calculate = require("./helperScores");
 
 const league_id = 2673;
 const getMatches = async () => {
@@ -60,11 +64,60 @@ const getMatches = async () => {
           : */ fixture.statusShort,
     };
   });
-  console.log(fixtures);
+  //console.log(fixtures);
 
   const savedFixtures = Match.bulkCreate(fixtures, {
     updateOnDuplicate: ["id"],
   });
+
+  //update the totalScore for players when match is finished in predictions
+  //only fetching the predictions where totalScore is null and updating
+  const toUpdateScore = await Prediction.findAll({
+    attributes: ["predGoalsHomeTeam", "predGoalsAwayTeam", "id"],
+    include: [
+      {
+        model: Match,
+        attributes: ["goalsHomeTeam", "goalsAwayTeam"],
+        where: {
+          status: "FT",
+          goalsHomeTeam: {
+            [Op.ne]: null,
+          },
+          goalsAwayTeam: {
+            [Op.ne]: null,
+          },
+        },
+      },
+      {
+        model: Score,
+        attributes: ["fullScore", "totoScore", "goalBonus"],
+      },
+    ],
+    where: { totalScore: null },
+    raw: true,
+    nest: true,
+  });
+
+  if (toUpdateScore.length) {
+    const calculatedScores = toUpdateScore.map((row) => {
+      return {
+        id: row.id,
+        totalScore: calculate.calculateScore(
+          {
+            homeTeam: row.match.goalsHomeTeam,
+            awayTeam: row.match.goalsAwayTeam,
+          },
+          { homeTeam: row.predGoalsHomeTeam, awayTeam: row.predGoalsAwayTeam },
+          row.score
+        ),
+      };
+    });
+
+    const updatedScores = Prediction.bulkCreate(calculatedScores, {
+      updateOnDuplicate: ["totalScore"],
+    });
+  }
+
   // setInterval(getMatches, 60 * 60 * 1000);
 };
 
