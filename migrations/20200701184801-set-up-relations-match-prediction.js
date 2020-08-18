@@ -14,7 +14,7 @@ module.exports = {
 
     await queryInterface.addColumn("predictions", "totalScore", {
       type: Sequelize.INTEGER,
-      defaultValue: 0,
+      //defaultValue: 0,
     });
   },
 

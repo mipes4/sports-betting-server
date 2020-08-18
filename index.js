@@ -9,15 +9,18 @@ const scoresRouter = require("./routers/scores");
 const matchesRouter = require("./routers/matches");
 const authRouter = require("./routers/auth");
 const roundRouter = require("./routers/rounds");
+const gameRouter = require("./routers/game");
+
 const matches = require("./API_requests/matches");
 const rounds = require("./API_requests/rounds");
 const Match = require("./models").match;
-
+const teams = require("./API_requests/teamsNL");
 const app = express();
 const router = new Router();
 
 matches.getMatches();
 rounds.getRounds();
+teams.getTeams();
 /**
  *
  * cors middleware:
@@ -109,6 +112,7 @@ app.use("/matches", matchesRouter);
 app.use("/scores", scoresRouter);
 app.use("/", authRouter);
 app.use("/rounds", roundRouter);
+app.use("/game", gameRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);

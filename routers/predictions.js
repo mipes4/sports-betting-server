@@ -92,7 +92,6 @@ router.get("/", async (req, res, next) => {
 // GET all scores for :matchId
 router.get("/match/:matchId", async (req, res, next) => {
   const { matchId } = req.params;
-  console.log("-----matchId", matchId);
 
   try {
     const matchPrediction = await Prediction.findAll({
@@ -109,7 +108,6 @@ router.get("/match/:matchId", async (req, res, next) => {
       where: { matchId },
       order: [["totalScore", "DESC"]],
     });
-    console.log("-----matchPrediction", matchPrediction);
     res.send(matchPrediction);
   } catch (e) {
     next(e);
@@ -126,7 +124,6 @@ router.get("/game/:gameId", async (req, res, next) => {
   parseInt(gameId) === 11
     ? seasons.push(`Regular Season - ${gameId * 3 + 1}`)
     : null;
-  console.log("------seasons", seasons, gameId);
   try {
     const matchPrediction = await Prediction.findAll({
       attributes: [
