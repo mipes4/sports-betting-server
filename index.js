@@ -10,6 +10,7 @@ const matchesRouter = require("./routers/matches");
 const authRouter = require("./routers/auth");
 const roundRouter = require("./routers/rounds");
 const gameRouter = require("./routers/game");
+const teamRouter = require("./routers/teams");
 
 const matches = require("./API_requests/matches");
 const rounds = require("./API_requests/rounds");
@@ -113,7 +114,7 @@ app.use("/scores", scoresRouter);
 app.use("/", authRouter);
 app.use("/rounds", roundRouter);
 app.use("/game", gameRouter);
-
+app.use("/team", teamRouter);
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
 });
