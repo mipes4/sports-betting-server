@@ -114,7 +114,7 @@ app.use("/scores", scoresRouter);
 app.use("/", authRouter);
 app.use("/rounds", roundRouter);
 app.use("/game", gameRouter);
-app.use("/team", teamRouter);
+app.use("/teams", teamRouter);
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
 });

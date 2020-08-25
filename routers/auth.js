@@ -38,12 +38,15 @@ router.post("/login", async (req, res, next) => {
 //POST create user
 router.post("/signup", async (req, res) => {
   const {
-    email,
-    password,
     username,
     firstName,
     lastName,
     telNumber,
+    email,
+    teamId,
+    password,
+    totaalToto,
+    isAdmin,
   } = req.body;
   if (
     !email ||
@@ -66,6 +69,7 @@ router.post("/signup", async (req, res) => {
       phoneNumber: telNumber,
       totaalToto,
       admin: isAdmin,
+      teamId,
     });
 
     delete newUser.dataValues["password"];
@@ -124,6 +128,7 @@ router.patch("/change_me/:userId", async (req, res, next) => {
         lastName,
         phoneNumber,
         totaalToto,
+        teamId: club,
       });
       res.json(updatedUser);
     }
